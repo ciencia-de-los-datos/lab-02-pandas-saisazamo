@@ -13,7 +13,6 @@ tbl0 = pd.read_csv("tbl0.tsv", sep="\t")
 tbl1 = pd.read_csv("tbl1.tsv", sep="\t")
 tbl2 = pd.read_csv("tbl2.tsv", sep="\t")
 
-
 def pregunta_01():
     """
     ¿Cuál es la cantidad de filas en la tabla `tbl0.tsv`?
@@ -22,7 +21,8 @@ def pregunta_01():
     40
 
     """
-    return
+    rows: int = tbl0.shape[0]
+    return rows
 
 
 def pregunta_02():
@@ -33,7 +33,8 @@ def pregunta_02():
     4
 
     """
-    return
+    columns: int = tbl0.shape[1]
+    return columns
 
 
 def pregunta_03():
@@ -50,7 +51,10 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
+    df: pd.DataFrame = tbl0.copy()
+    letters_count: pd.Series = df.groupby('_c1')['_c1'].value_counts()
+    return letters_count
+
 
 
 def pregunta_04():
@@ -65,7 +69,9 @@ def pregunta_04():
     E    4.785714
     Name: _c2, dtype: float64
     """
-    return
+    df: pd.DataFrame = tbl0.copy()
+    letters_mean: pd.Series = df.groupby('_c1')['_c2'].mean()
+    return letters_mean
 
 
 def pregunta_05():
@@ -82,7 +88,9 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
+    df: pd.DataFrame = tbl0.copy()
+    letters_max: pd.Series = df.groupby('_c1')['_c2'].max()
+    return letters_max
 
 
 def pregunta_06():
@@ -94,7 +102,10 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
+    df: pd.DataFrame = tbl1.copy()
+    df['_c4'] = df['_c4'].apply(str.upper)
+    unique_letters: pd.Series = df['_c4'].sort_values().unique()
+    return list(unique_letters)
 
 
 def pregunta_07():
@@ -110,7 +121,9 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
+    df: pd.DataFrame = tbl0.copy()
+    letters_sum: pd.Series = df.groupby('_c1')['_c2'].sum()
+    return letters_sum
 
 
 def pregunta_08():
@@ -128,8 +141,9 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
-
+    df: pd.DataFrame = tbl0.copy()
+    df['suma'] = df['_c0'] + df['_c2']
+    return df
 
 def pregunta_09():
     """
@@ -146,7 +160,10 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+    df: pd.DataFrame = tbl0.copy()
+    df['year'] = df['_c3'].str.split('-').apply(lambda x:x[0])
+    return df
+
 
 
 def pregunta_10():
@@ -163,7 +180,9 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
+    df: pd.DataFrame = tbl0.copy()
+    df: pd.DataFrame = df.groupby('_c1')['_c2'].apply(lambda x: ':'.join(map(str,sorted(x)))).reset_index(name='_c2').set_index('_c1')
+    return df
 
 
 def pregunta_11():
@@ -182,8 +201,9 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
-
+    df: pd.DataFrame = tbl1.copy()
+    df: pd.DataFrame = df.groupby('_c0', as_index=False)['_c4'].apply(lambda x: ','.join(sorted(x)))
+    return df
 
 def pregunta_12():
     """
@@ -200,7 +220,10 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
+    df: pd.DataFrame = tbl2.copy()
+    df['_c5'] = df['_c5a'] + ':' + df['_c5b'].astype(str)
+    df: pd.DataFrame = df.groupby('_c0', as_index=False)['_c5'].apply(lambda x: ','.join(sorted(x)))
+    return df
 
 
 def pregunta_13():
@@ -217,4 +240,9 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    df1: pd.DataFrame = tbl0.copy()
+    df2: pd.DataFrame = tbl2.copy()
+    concatenated_df = df1.merge(df2, on='_c0')
+    df3: pd.Series = concatenated_df.groupby('_c1')['_c5b'].sum()
+    return df3
+
